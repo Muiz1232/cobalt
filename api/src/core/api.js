@@ -256,7 +256,10 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
                 params: normalizedRequest,
             });
 
-            res.status(result.status).json(result.body);
+            res.status(result.status).json({
+                ...result.body,
+                Credit: 'tg: @teleservices_api'
+              });
         } catch {
             fail(res, "error.api.generic");
         }
