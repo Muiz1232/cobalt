@@ -46,7 +46,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
     const startTimestamp = startTime.getTime();
 
     const serverInfo = JSON.stringify({
-        cobalt: {
+        teleservices: {
             version: version,
             url: env.apiURL,
             startTime: `${startTimestamp}`,
@@ -55,8 +55,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
             services: [...env.enabledServices].map(e => {
                 return friendlyServiceName(e);
             }),
-        },
-        git,
+        }
     })
 
     const handleRateExceeded = (_, res) => {
