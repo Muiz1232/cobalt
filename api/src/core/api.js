@@ -47,7 +47,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
 
     const serverInfo = JSON.stringify({
         teleservices: {
-            version: version,
+            version: '1.0.0',
             url: env.apiURL,
             startTime: `${startTimestamp}`,
             durationLimit: env.durationLimit,
