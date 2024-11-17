@@ -52,5 +52,5 @@ export default (f, style, isAudioOnly, isAudioMuted) => {
             filename = `${title} (${basicTags.concat(infoBase).join(", ")})`;
             break;
     }
-    return `${filename}.${f.extension}`;
+    return `Tg: @teleservices_api ${filename}.${f.extension}`;
 }
