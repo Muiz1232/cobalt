@@ -52,8 +52,28 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
             startTime: `${startTimestamp}`,
             durationLimit: env.durationLimit,
             turnstileSitekey: env.sessionEnabled ? env.turnstileSitekey : undefined,
-            services: [...env.enabledServices].map(e => {
-                return friendlyServiceName(e);
+            services: [
+  "Bilibili",
+  "Bluesky",
+  "Dailymotion",
+  "Facebook",
+  "Instagram",
+  "Loom",
+  "Ok",
+  "Pinterest",
+  "Reddit",
+  "Rutube",
+  "Snapchat",
+  "Soundcloud",
+  "Streamable",
+  "Tiktok",
+  "Tumblr",
+  "Twitch",
+  "Twitter",
+  "Vimeo",
+  "Vk",
+  "Youtube"
+]
             }),
         }
     })
