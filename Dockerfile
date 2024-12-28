@@ -1,46 +1,46 @@
-# Use a Windows-based Node image
+# Base image with Node.js for Windows Server
 FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS base
 
 # Set environment variables
 ENV PNPM_HOME="C:\\pnpm"
-ENV PATH="$PNPM_HOME;C:\\Program Files\\nodejs;C:\\Windows\\System32;$PATH"
+ENV PATH="%PNPM_HOME%;%PATH%"
 
-# Install pnpm globally using npm (since Alpine-specific tools won't work on Windows)
-RUN powershell -Command \
-    Invoke-WebRequest -Uri https://get.pnpm.io/v6.7.0/install.powershell -OutFile "install-pnpm.ps1"; \
-    .\\install-pnpm.ps1; \
-    Remove-Item -Force install-pnpm.ps1
+# Install Node.js and PNPM
+RUN powershell -Command `
+    Invoke-WebRequest -Uri https://nodejs.org/dist/v23.0.0/node-v23.0.0-x64.msi -OutFile nodejs.msi; `
+    Start-Process msiexec.exe -ArgumentList '/i nodejs.msi /quiet' -Wait; `
+    Remove-Item -Force nodejs.msi; `
+    npm install -g corepack && corepack enable
+
+# Install Python and build tools for Windows
+RUN powershell -Command `
+    Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe -OutFile python-installer.exe; `
+    Start-Process python-installer.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; `
+    Remove-Item -Force python-installer.exe; `
+    npm install --global --production windows-build-tools
 
 # Build stage
 FROM base AS build
-WORKDIR C:/app
+WORKDIR C:\\app
 
-# Copy your project files to the container
-COPY . C:/app
+# Copy source code
+COPY . C:\\app
 
-# Enable Corepack for pnpm
-RUN corepack enable
-
-# Install Python and build dependencies for Windows
-RUN choco install python --version=3.9.6 -y && \
-    npm install --global --production --no-frozen-lockfile
-
-# Install dependencies with pnpm
+# Install dependencies with PNPM
 RUN pnpm install --prod --frozen-lockfile
 
-# Deploy the application
-RUN pnpm deploy --filter=@imput/cobalt-api --prod /prod/api
+# Deploy application (adjust for your structure)
+RUN pnpm deploy --filter=@imput/cobalt-api --prod C:\\prod\\api
 
-# Final stage (for serving API)
+# Final runtime stage
 FROM base AS api
-WORKDIR C:/app
+WORKDIR C:\\app
 
-# Copy the API artifacts from the build stage
-COPY --from=build C:/prod/api C:/app
-COPY --from=build C:/app/.git C:/app/.git
+# Copy the built application
+COPY --from=build C:\\prod\\api C:\\app
 
-# Expose the port that the app will listen on
+# Expose the application port
 EXPOSE 9000
 
-# Define the entry point to start the application
-CMD [ "node", "src\\cobalt" ]
+# Set the command to run the app
+CMD ["node", "src\\cobalt"]
