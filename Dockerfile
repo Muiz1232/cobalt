@@ -1,5 +1,5 @@
 # Base image with Node.js for Windows Server
-FROM mcr.microsoft.com/windows/servercore:ltsc2022 AS base
+FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS base
 
 # Set environment variables
 ENV PNPM_HOME="C:\\pnpm"
@@ -7,7 +7,7 @@ ENV PATH="%PNPM_HOME%;%PATH%"
 
 # Install Node.js and PNPM
 RUN powershell -Command \
-    Invoke-WebRequest -Uri https://nodejs.org/dist/v23.0.0/node-v23.0.0-x64.msi -OutFile nodejs.msi; \
+    Invoke-WebRequest -Uri https://nodejs.org/dist/v20.0.0/node-v20.0.0-x64.msi -OutFile nodejs.msi; \
     Start-Process msiexec.exe -ArgumentList '/i nodejs.msi /quiet' -NoNewWindow -Wait; \
     Remove-Item -Force nodejs.msi; \
     npm install -g corepack && corepack enable
