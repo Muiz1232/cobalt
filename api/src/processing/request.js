@@ -67,6 +67,7 @@ export function createResponse(responseType, responseData) {
         return {
             status,
             body: {
+                service : responseData.service,
                 status: responseType,
                 ...response
             }
