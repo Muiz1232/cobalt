@@ -74,7 +74,6 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
   "Vk",
   "Youtube"
 ]
-            }),
         }
     })
 
