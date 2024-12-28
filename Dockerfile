@@ -1,46 +1,26 @@
-# Base image with Node.js for Windows Server
-FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS base
+FROM node:23-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
-# Set environment variables
-ENV PNPM_HOME="C:\\pnpm"
-ENV PATH="%PNPM_HOME%;%PATH%"
-
-# Install Node.js and PNPM
-RUN powershell -Command \
-    Invoke-WebRequest -Uri https://nodejs.org/dist/v20.0.0/node-v20.0.0-x64.msi -OutFile nodejs.msi; \
-    Start-Process msiexec.exe -ArgumentList '/i nodejs.msi /quiet' -NoNewWindow -Wait; \
-    Remove-Item -Force nodejs.msi; \
-    npm install -g corepack && corepack enable
-
-# Install Python and build tools for Windows
-RUN powershell -Command \
-    Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe -OutFile python-installer.exe; \
-    Start-Process python-installer.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -NoNewWindow -Wait; \
-    Remove-Item -Force python-installer.exe; \
-    npm install --global --production windows-build-tools
-
-# Build stage
 FROM base AS build
-WORKDIR C:\\app
+WORKDIR /app
+COPY . /app
 
-# Copy source code
-COPY . C:\\app
+RUN corepack enable
+RUN apk add --no-cache python3 alpine-sdk
 
-# Install dependencies with PNPM
-RUN pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --prod --frozen-lockfile
 
-# Deploy application (adjust for your structure)
-RUN pnpm deploy --filter=@imput/cobalt-api --prod C:\\prod\\api
+RUN pnpm deploy --filter=@imput/cobalt-api --prod /prod/api
 
-# Final runtime stage
 FROM base AS api
-WORKDIR C:\\app
+WORKDIR /app
 
-# Copy the built application
-COPY --from=build C:\\prod\\api C:\\app
+COPY --from=build --chown=node:node /prod/api /app
+COPY --from=build --chown=node:node /app/.git /app/.git
 
-# Expose the application port
+USER node
+
 EXPOSE 9000
-
-# Set the command to run the app
-CMD ["node", "src\\cobalt"]
+CMD [ "node", "src/cobalt" ]
