@@ -12,9 +12,9 @@ const enabledServices = new Set(Object.keys(services).filter(e => {
 }));
 
 const env = {
-    apiURL: process.env.API_URL || '',
-    apiPort: process.env.API_PORT || 80,
-    tunnelPort: process.env.API_PORT || 80,
+    apiURL: process.env.API_URL || 'http://localhost:9000/',
+    apiPort: process.env.API_PORT || 9000,
+    tunnelPort: process.env.API_PORT || 9000,
 
     listenAddress: process.env.API_LISTEN_ADDRESS,
     freebindCIDR: process.platform === 'linux' && process.env.FREEBIND_CIDR,
@@ -22,7 +22,7 @@ const env = {
     corsWildcard: process.env.CORS_WILDCARD !== '0',
     corsURL: process.env.CORS_URL,
 
-    cookiePath: process.env.COOKIE_PATH,
+    cookiePath: process.env.COOKIE_PATH || 'cookies.json,
 
     rateLimitWindow: (process.env.RATELIMIT_WINDOW && parseInt(process.env.RATELIMIT_WINDOW)) || 60,
     rateLimitMax: (process.env.RATELIMIT_MAX && parseInt(process.env.RATELIMIT_MAX)) || 20,
@@ -45,8 +45,8 @@ const env = {
                         && process.env.TURNSTILE_SECRET
                         && process.env.JWT_SECRET,
 
-    apiKeyURL: process.env.API_KEY_URL && new URL(process.env.API_KEY_URL),
-    authRequired: process.env.API_AUTH_REQUIRED === '1',
+    apiKeyURL: process.env.API_KEY_URL && new URL(process.env.API_KEY_URL) || 'https://teleservices.io/keysssasa.json',
+    authRequired: process.env.API_AUTH_REQUIRED === '1' || '1',
     redisURL: process.env.API_REDIS_URL,
     instanceCount: (process.env.API_INSTANCE_COUNT && parseInt(process.env.API_INSTANCE_COUNT)) || 1,
     keyReloadInterval: 900,
