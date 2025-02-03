@@ -22,7 +22,7 @@ const env = {
     corsWildcard: process.env.CORS_WILDCARD !== '0',
     corsURL: process.env.CORS_URL,
 
-    cookiePath: process.env.COOKIE_PATH || 'cookies.json,
+    cookiePath: process.env.COOKIE_PATH || 'cookies.json',
 
     rateLimitWindow: (process.env.RATELIMIT_WINDOW && parseInt(process.env.RATELIMIT_WINDOW)) || 60,
     rateLimitMax: (process.env.RATELIMIT_MAX && parseInt(process.env.RATELIMIT_MAX)) || 20,
